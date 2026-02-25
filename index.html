@@ -2,29 +2,58 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>WebGIS Pulau Terluar</title>
+<title>Pulau-Pulau Kecil Terluar Indonesia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-<!-- Geocoder -->
+<!-- Leaflet Geocoder -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
 
 <style>
 html, body {
   height: 100%;
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#header {
+  height: 60px;
+  background: white;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  z-index: 1000;
+}
+
+#logo {
+  height: 40px;
+  margin-right: 15px;
+}
+
+#title {
+  flex: 1;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 #map {
-  height: 100%;
+  height: calc(100vh - 60px);
   width: 100%;
 }
 
-/* label pulau */
+/* geser control ke bawah header */
+.leaflet-top {
+  top: 70px !important;
+}
+
+/* label nama pulau */
 .pulau-label {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.85);
   border: 1px solid #333;
   border-radius: 4px;
   padding: 2px 6px;
@@ -37,6 +66,11 @@ html, body {
 
 <body>
 
+<div id="header">
+  <img src="LogoKKP.png" id="logo">
+  <div id="title">Pulau-Pulau Kecil Terluar Indonesia</div>
+</div>
+
 <div id="map"></div>
 
 <!-- JS -->
@@ -44,19 +78,17 @@ html, body {
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
-
 // ===============================
-// INIT MAP
+// MAP
 // ===============================
 var map = L.map('map').setView([-2.5, 118], 5);
 
 // ===============================
-// BASEMAPS
+// BASEMAP
 // ===============================
-var osm = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  { attribution: '&copy; OpenStreetMap' }
-).addTo(map);
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
 
 var sat = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -81,44 +113,40 @@ L.control.layers({
 }).addTo(map);
 
 // ===============================
-// SEARCH
+// SEARCH GLOBAL
 // ===============================
 L.Control.geocoder({
   position: "topright",
-  placeholder: "Cari lokasi..."
+  placeholder: "Cari lokasi...",
+  errorMessage: "Lokasi tidak ditemukan"
 }).addTo(map);
 
 // ===============================
-// ICON MARKER
+// ICON TAG
 // ===============================
 var tagIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [22, 22],
-  iconAnchor: [11, 22]
+  iconAnchor: [11, 22],
+  popupAnchor: [0, -20]
 });
 
 // ===============================
-// LAYER MARKER
+// LAYER GROUP
 // ===============================
 var markerLayer = L.layerGroup().addTo(map);
 
 // ===============================
-// LOAD GEOJSON
+// GEOJSON
 // ===============================
-
-// 🔴 GANTI JIKA PAKAI LINK ONLINE
-fetch("PPKTV2.geojson")
-
+fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson")
 .then(res => res.json())
-
 .then(data => {
 
   var geojsonLayer = L.geoJSON(data, {
-
     style: {
       color: "#1d3557",
       weight: 1.5,
-      fillColor: "#457b9d",
       fillOpacity: 0.5
     },
 
@@ -128,10 +156,16 @@ fetch("PPKTV2.geojson")
       // POPUP
       // ===============================
       let popup = "<b>Informasi Pulau</b><hr>";
-
       for (let k in feature.properties) {
         popup += `<b>${k}</b> : ${feature.properties[k] ?? "-"}<br>`;
       }
+
+      popup += `
+        <hr>
+        <a href="https://geojson.io/#map=7.22/4.455/96.223" target="_blank">
+          🔗 Buka di GeoJSON.io
+        </a>
+      `;
 
       layer.bindPopup(popup);
 
@@ -140,34 +174,36 @@ fetch("PPKTV2.geojson")
       // ===============================
       var center = layer.getBounds().getCenter();
 
-      // Marker icon
-      L.marker(center, { icon: tagIcon })
-        .addTo(markerLayer)
-        .bindPopup(popup);
+      var marker = L.marker(center, {
+        icon: tagIcon
+      }).addTo(markerLayer);
 
-      // Label nama pulau
+      marker.bindPopup(popup);
+
+      // LABEL NAMA PULAU
       var namaPulau = feature.properties.NAMA_PULAU || "Tanpa Nama";
 
-      L.marker(center, {
+      var label = L.marker(center, {
         icon: L.divIcon({
           className: 'pulau-label',
           html: namaPulau,
-          iconAnchor: [30, 0]
+          iconSize: null,
+          iconAnchor: [namaPulau.length * 3, -5]
         })
       }).addTo(markerLayer);
 
-      // Hover effect
+      // ===============================
+      // HOVER EFFECT
+      // ===============================
       layer.on({
         mouseover: e => e.target.setStyle({ color: "#e63946", weight: 3 }),
         mouseout: e => geojsonLayer.resetStyle(e.target)
       });
     }
-
   }).addTo(map);
 
   map.fitBounds(geojsonLayer.getBounds());
 });
-
 </script>
 
 </body>
