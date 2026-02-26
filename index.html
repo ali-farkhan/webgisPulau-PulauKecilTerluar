@@ -25,7 +25,6 @@ html, body {
   align-items: center;
   padding: 0 16px;
   border-bottom: 1px solid #ddd;
-  z-index: 1000;
 }
 
 #logo {
@@ -40,50 +39,46 @@ html, body {
   font-weight: bold;
 }
 
-/* ================= MAIN CONTENT ================= */
+/* ================= MAIN ================= */
 #content {
   display: flex;
   height: calc(100vh - 60px);
 }
 
-/* ================= MAP ================= */
+/* MAP */
 #map-container {
   width: 60%;
 }
-
 #map {
   width: 100%;
   height: 100%;
 }
 
-/* ================= SIDE PANEL ================= */
+/* SIDE PANEL */
 #side-panel {
   width: 40%;
-  background: #ffffff;
   padding: 16px;
   border-left: 1px solid #ddd;
-
-  /* INI KUNCI SCROLL */
   overflow-y: auto;
+  background: #fff;
 }
 
-/* konten panel */
 .panel-item {
-  padding: 12px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
   background: #f9f9f9;
 }
 
-/* geser control leaflet */
+/* geser kontrol leaflet */
 .leaflet-top {
   top: 70px !important;
 }
 
-/* ================= LABEL PULAU ================= */
+/* LABEL MARKER */
 .pulau-label {
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.9);
   border: 1px solid #333;
   border-radius: 4px;
   padding: 2px 6px;
@@ -113,8 +108,7 @@ html, body {
   <!-- SIDE PANEL -->
   <div id="side-panel">
     <h3>Daftar Informasi Pulau</h3>
-
-    <!-- contoh konten panjang -->
+    <div class="panel-item">Scroll aktif ✔</div>
     <div class="panel-item">Pulau 1</div>
     <div class="panel-item">Pulau 2</div>
     <div class="panel-item">Pulau 3</div>
@@ -125,8 +119,6 @@ html, body {
     <div class="panel-item">Pulau 8</div>
     <div class="panel-item">Pulau 9</div>
     <div class="panel-item">Pulau 10</div>
-    <div class="panel-item">Pulau 11</div>
-    <div class="panel-item">Pulau 12</div>
   </div>
 
 </div>
@@ -166,6 +158,7 @@ var tagIcon = L.icon({
   iconAnchor: [11, 22]
 });
 
+// ================= LAYER =================
 var markerLayer = L.layerGroup().addTo(map);
 
 // ================= GEOJSON =================
@@ -176,30 +169,29 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson"
   var geojsonLayer = L.geoJSON(data, {
     onEachFeature: function (feature, layer) {
 
-      /* POPUP */
+      // POPUP
       let popup = "<b>Informasi Pulau</b><hr>";
       for (let k in feature.properties) {
         popup += `<b>${k}</b> : ${feature.properties[k] ?? "-"}<br>`;
       }
       layer.bindPopup(popup);
 
-      /* ================= LABEL NAMA PULAU ================= */
-      if (feature.properties && feature.properties.nama_pulau) {
-        layer.bindTooltip(
-          feature.properties.nama_pulau,
+      // TITIK TENGAH
+      var center = layer.getBounds().getCenter();
+
+      // MARKER + LABEL NAMA PULAU
+      L.marker(center, { icon: tagIcon })
+        .addTo(markerLayer)
+        .bindPopup(popup)
+        .bindTooltip(
+          feature.properties.nama_pulau ?? "Nama Pulau",
           {
             permanent: true,
-            direction: "center",
+            direction: "top",
+            offset: [0, -10],
             className: "pulau-label"
           }
         );
-      }
-
-      /* MARKER TENGAH */
-      var center = layer.getBounds().getCenter();
-      L.marker(center, { icon: tagIcon })
-        .addTo(markerLayer)
-        .bindPopup(popup);
     }
   }).addTo(map);
 
