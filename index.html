@@ -39,7 +39,7 @@ html, body {
   font-weight: bold;
 }
 
-/* ================= MAIN CONTENT ================= */
+/* ================= MAIN ================= */
 #content {
   display: flex;
   height: calc(100vh - 60px);
@@ -63,13 +63,14 @@ html, body {
   overflow-y: auto;
 }
 
-/* ===== INFO BOX ===== */
+/* ================= INFO BOX ================= */
 .info-box {
   background: linear-gradient(135deg, #eaf3ff, #ffffff);
   border: 1px solid #cbd8ff;
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .info-box h4 {
@@ -78,7 +79,17 @@ html, body {
   color: #1a3c8b;
 }
 
-/* ===== PANEL ITEM ===== */
+.info-box p {
+  margin: 4px 0;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.info-highlight {
+  color: #c62828;
+}
+
+/* ================= PANEL PULAU ================= */
 .panel-item {
   padding: 12px;
   margin-bottom: 14px;
@@ -87,7 +98,6 @@ html, body {
   background: #f9f9f9;
 }
 
-/* ===== PANEL PULAU FOTO ===== */
 .panel-pulau h4 {
   margin: 0 0 8px;
   font-size: 15px;
@@ -111,7 +121,7 @@ html, body {
   top: 70px !important;
 }
 
-/* LABEL PULAU */
+/* ================= LABEL PULAU ================= */
 .pulau-label {
   background: rgba(255,255,255,0.85);
   border: 1px solid #333;
@@ -143,22 +153,29 @@ html, body {
   <!-- SIDE PANEL -->
   <div id="side-panel">
 
-    <!-- INFO STATISTIK -->
+    <!-- ===== INFO STATISTIK ===== -->
     <div class="info-box">
       <h4>SERTIPIKAT HAK ATAS TANAH</h4>
-      <p><b>72 Sertipikat / 61 PPK/T</b></p>
+      <p>72 Sertipikat / 61 PPK/T</p>
       <p>Tersebar di 32 Kabupaten/Kota</p>
     </div>
 
     <div class="info-box">
       <h4>LUAS BIDANG TANAH s.d AWAL DES 2024</h4>
-      <p><b>7.464.990 m²</b></p>
+      <p>7.464.990 m²</p>
       <p>746,499 ha</p>
+    </div>
+
+    <div class="info-box">
+      <h4>TARGET LUAS BIDANG TANAH TAHUN 2024</h4>
+      <p>84 Sertipikat / 73 PPK/T</p>
+      <p>776,8 ha</p>
+      <p class="info-highlight">Nilai ± 2,01 Triliun</p>
     </div>
 
     <h3>Daftar Informasi Pulau</h3>
 
-    <!-- ===== PULAU NIPA (DENGAN FOTO) ===== -->
+    <!-- ===== PULAU NIPA ===== -->
     <div class="panel-item panel-pulau">
       <h4>Pulau Nipa</h4>
       <img src="Pulau Nipa.png" alt="Pulau Nipa">
@@ -167,15 +184,13 @@ html, body {
       <p><b>Keterangan:</b> Pulau strategis di wilayah perbatasan Indonesia.</p>
     </div>
 
-    <!-- PULAU LAIN (DUMMY) -->
+    <!-- Dummy pulau lain -->
     <div class="panel-item">Pulau 2</div>
     <div class="panel-item">Pulau 3</div>
     <div class="panel-item">Pulau 4</div>
     <div class="panel-item">Pulau 5</div>
-    <div class="panel-item">Pulau 6</div>
 
   </div>
-
 </div>
 
 <!-- JS -->
