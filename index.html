@@ -25,7 +25,6 @@ html, body {
   align-items: center;
   padding: 0 16px;
   border-bottom: 1px solid #ddd;
-  z-index: 1000;
 }
 
 #logo {
@@ -50,7 +49,6 @@ html, body {
 #map-container {
   width: 60%;
 }
-
 #map {
   width: 100%;
   height: 100%;
@@ -65,39 +63,47 @@ html, body {
   overflow-y: auto;
 }
 
-/* ===== INFO STATISTIK ATAS ===== */
+/* ===== INFO BOX ===== */
 .info-box {
   background: linear-gradient(135deg, #eaf3ff, #ffffff);
   border: 1px solid #cbd8ff;
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .info-box h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
   font-size: 14px;
   color: #1a3c8b;
 }
 
-.info-box p {
-  margin: 4px 0;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.info-highlight {
-  color: #c62828;
-}
-
-/* konten panel */
+/* ===== PANEL ITEM ===== */
 .panel-item {
   padding: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #f9f9f9;
+}
+
+/* ===== PANEL PULAU FOTO ===== */
+.panel-pulau h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #0d47a1;
+}
+
+.panel-pulau img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+}
+
+.panel-pulau p {
+  margin: 4px 0;
+  font-size: 13px;
 }
 
 /* geser control leaflet */
@@ -105,7 +111,7 @@ html, body {
   top: 70px !important;
 }
 
-/* ================= LABEL PULAU ================= */
+/* LABEL PULAU */
 .pulau-label {
   background: rgba(255,255,255,0.85);
   border: 1px solid #333;
@@ -137,41 +143,36 @@ html, body {
   <!-- SIDE PANEL -->
   <div id="side-panel">
 
-    <!-- ===== INFO DARI GAMBAR ===== -->
+    <!-- INFO STATISTIK -->
     <div class="info-box">
       <h4>SERTIPIKAT HAK ATAS TANAH</h4>
-      <p>72 Sertipikat / 61 PPK/T</p>
+      <p><b>72 Sertipikat / 61 PPK/T</b></p>
       <p>Tersebar di 32 Kabupaten/Kota</p>
     </div>
 
     <div class="info-box">
       <h4>LUAS BIDANG TANAH s.d AWAL DES 2024</h4>
-      <p>7.464.990 m²</p>
+      <p><b>7.464.990 m²</b></p>
       <p>746,499 ha</p>
-    </div>
-
-    <div class="info-box">
-      <h4>TARGET LUAS BIDANG TANAH TAHUN 2024</h4>
-      <p>84 Sertipikat / 73 PPK/T</p>
-      <p>776,8 ha</p>
-      <p class="info-highlight">Nilai ± 2,01 Triliun</p>
     </div>
 
     <h3>Daftar Informasi Pulau</h3>
 
-    <!-- contoh isi -->
-    <div class="panel-item">Pulau 1</div>
+    <!-- ===== PULAU NIPA (DENGAN FOTO) ===== -->
+    <div class="panel-item panel-pulau">
+      <h4>Pulau Nipa</h4>
+      <img src="Pulau Nipa.png" alt="Pulau Nipa">
+      <p><b>Provinsi:</b> Kepulauan Riau</p>
+      <p><b>Status:</b> Pulau Kecil Terluar</p>
+      <p><b>Keterangan:</b> Pulau strategis di wilayah perbatasan Indonesia.</p>
+    </div>
+
+    <!-- PULAU LAIN (DUMMY) -->
     <div class="panel-item">Pulau 2</div>
     <div class="panel-item">Pulau 3</div>
     <div class="panel-item">Pulau 4</div>
     <div class="panel-item">Pulau 5</div>
     <div class="panel-item">Pulau 6</div>
-    <div class="panel-item">Pulau 7</div>
-    <div class="panel-item">Pulau 8</div>
-    <div class="panel-item">Pulau 9</div>
-    <div class="panel-item">Pulau 10</div>
-    <div class="panel-item">Pulau 11</div>
-    <div class="panel-item">Pulau 12</div>
 
   </div>
 
@@ -229,19 +230,13 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson"
 
       layer.bindPopup(popup);
 
-      // LABEL NAMA
       if (feature.properties && feature.properties.NAMA_PULAU) {
         layer.bindTooltip(
           feature.properties.NAMA_PULAU,
-          {
-            permanent: true,
-            direction: "center",
-            className: "pulau-label"
-          }
+          { permanent: true, direction: "center", className: "pulau-label" }
         );
       }
 
-      // MARKER TENGAH
       var center = layer.getBounds().getCenter();
       L.marker(center, { icon: tagIcon })
         .addTo(markerLayer)
