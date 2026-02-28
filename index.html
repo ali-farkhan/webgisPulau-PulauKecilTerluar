@@ -168,12 +168,43 @@ html, body {
 <div id="video-overlay">
   <div id="video-box">
     <button id="close-video">✖</button>
-    <video autoplay muted controls>
+    <video id="introVideo" autoplay muted controls>
       <source src="hat.mp4" type="video/mp4">
       Browser Anda tidak mendukung video.
     </video>
   </div>
 </div>
+
+<script>
+const overlay = document.getElementById("video-overlay");
+const videoBox = document.getElementById("video-box");
+const closeBtn = document.getElementById("close-video");
+const video = document.getElementById("introVideo");
+
+/* === FUNGSI TUTUP VIDEO === */
+function closeVideo() {
+  video.pause();
+  video.currentTime = 0;
+  overlay.style.display = "none";
+}
+
+/* Tombol close */
+closeBtn.addEventListener("click", function (e) {
+  e.stopPropagation();
+  closeVideo();
+});
+
+/* Klik DI LUAR video */
+overlay.addEventListener("click", closeVideo);
+
+/* Klik DI DALAM video → JANGAN TUTUP */
+videoBox.addEventListener("click", function (e) {
+  e.stopPropagation();
+});
+</script>
+
+</body>
+</html>
 
 <!-- ================= HEADER ================= -->
 <div id="header">
