@@ -215,7 +215,7 @@ var tagIcon = L.icon({
 var markerLayer = L.layerGroup().addTo(map);
 
 // ================= GEOJSON =================
-fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson")
+fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson")
 .then(res => res.json())
 .then(data => {
 
@@ -230,9 +230,9 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson"
       layer.bindPopup(popup);
 
       // LABEL NAMA
-      if (feature.properties && feature.properties.NAMA_PULAU) {
+      if (feature.properties && feature.properties.NAMA_PUL_1) {
         layer.bindTooltip(
-          feature.properties.NAMA_PULAU,
+          feature.properties.NAMA_PUL_1,
           {
             permanent: true,
             direction: "center",
