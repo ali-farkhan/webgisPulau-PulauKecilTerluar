@@ -30,10 +30,11 @@ html, body {
 
 #video-box {
   width: 70%;
-  max-width: 800px;
+  max-width: 900px;
   background: black;
   border-radius: 10px;
   overflow: hidden;
+  position: relative;
 }
 
 #video-box video {
@@ -82,10 +83,10 @@ html, body {
 
 /* ================= SIDE PANEL ================= */
 #side-panel {
-  width: 360px;
-  max-width: 420px;
+  width: 460px;            /* ⬅️ DILEBARKAN */
+  max-width: 520px;
   background: #ffffff;
-  padding: 16px;
+  padding: 18px;
   border-left: 1px solid #ddd;
   overflow-y: auto;
 }
@@ -121,7 +122,7 @@ html, body {
 
 /* LABEL */
 .pulau-label {
-  background: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.9);
   border: 1px solid #333;
   border-radius: 4px;
   padding: 2px 6px;
@@ -140,12 +141,12 @@ html, body {
   }
 
   #map-container {
-    height: 60vh;
+    height: 55vh;
   }
 
   #side-panel {
     width: 100%;
-    height: 40vh;
+    height: 45vh;
     border-left: none;
     border-top: 1px solid #ddd;
   }
@@ -211,8 +212,15 @@ html, body {
       <p><b>Keterangan:</b> Pulau strategis perbatasan NKRI.</p>
     </div>
 
-    <div class="panel-item"><h4>Pulau 2</h4><p>Data belum tersedia</p></div>
-    <div class="panel-item"><h4>Pulau 3</h4><p>Data belum tersedia</p></div>
+    <div class="panel-item">
+      <h4>Pulau 2</h4>
+      <p>Data belum tersedia</p>
+    </div>
+
+    <div class="panel-item">
+      <h4>Pulau 3</h4>
+      <p>Data belum tersedia</p>
+    </div>
 
   </div>
 </div>
@@ -222,24 +230,27 @@ html, body {
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
-/* VIDEO */
+/* ================= VIDEO ================= */
 const overlay = document.getElementById("video-overlay");
 const videoBox = document.getElementById("video-box");
 const video = document.getElementById("introVideo");
 
+/* klik di luar video → close */
 overlay.addEventListener("click", () => {
   video.pause();
   video.currentTime = 0;
   overlay.style.display = "none";
 });
 
+/* klik di video → tidak close */
 videoBox.addEventListener("click", e => e.stopPropagation());
 
-/* MAP */
+/* ================= MAP ================= */
 var map = L.map('map').setView([-2.5, 118], 5);
 
-var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-  .addTo(map);
+var osm = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+).addTo(map);
 
 var sat = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
@@ -256,18 +267,28 @@ var tagIcon = L.icon({
 
 var markerLayer = L.layerGroup().addTo(map);
 
+/* ================= GEOJSON ================= */
 fetch("PPKTV3.geojson")
-.then(r => r.json())
+.then(res => res.json())
 .then(data => {
-  var g = L.geoJSON(data, {
-    onEachFeature: (f,l) => {
-      let name = f.properties?.NAMA_PUL_1 ?? "Pulau";
-      l.bindPopup(name);
-      l.bindTooltip(name, {permanent:true, direction:"center", className:"pulau-label"});
-      L.marker(l.getBounds().getCenter(), {icon:tagIcon}).addTo(markerLayer);
+  var geo = L.geoJSON(data, {
+    onEachFeature: (f, layer) => {
+      const name = f.properties?.NAMA_PUL_1 || "Pulau";
+      layer.bindPopup(name);
+      layer.bindTooltip(name, {
+        permanent: true,
+        direction: "center",
+        className: "pulau-label"
+      });
+
+      if (layer.getBounds) {
+        L.marker(layer.getBounds().getCenter(), { icon: tagIcon })
+          .addTo(markerLayer);
+      }
     }
   }).addTo(map);
-  map.fitBounds(g.getBounds());
+
+  map.fitBounds(geo.getBounds());
 });
 
 setTimeout(() => map.invalidateSize(), 300);
