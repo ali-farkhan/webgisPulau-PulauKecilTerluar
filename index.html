@@ -189,10 +189,18 @@ var tagIcon = L.icon({
 // ================= MARKER LAYER =================
 var markerLayer = L.layerGroup().addTo(map);
 
+<script>
 // ================= GEOJSON =================
-fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson")
-  .then(res => res.json())
+fetch("https://cdn.jsdelivr.net/gh/ali-farkhan/webgis@main/PPKTV3.geojson")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
+    }
+    return response.json();
+  })
   .then(data => {
+
+    console.log("GeoJSON loaded:", data);
 
     var geojsonLayer = L.geoJSON(data, {
 
@@ -213,7 +221,6 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson"
         }
         layer.bindPopup(popup);
 
-        // LABEL
         if (feature.properties?.NAMA_PUL_1) {
           layer.bindTooltip(feature.properties.NAMA_PUL_1, {
             permanent: true,
@@ -222,7 +229,7 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson"
           });
         }
 
-        // MARKER TENGAH (AMAN UNTUK POLYGON)
+        // Marker tengah polygon
         if (layer.getBounds) {
           var center = layer.getBounds().getCenter();
           L.marker(center, { icon: tagIcon })
@@ -237,15 +244,7 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson"
 
   })
   .catch(err => {
+    console.error("ERROR GEOJSON:", err);
     alert("Gagal memuat GeoJSON");
-    console.error(err);
   });
-
-// FIX FLEX BUG
-setTimeout(() => {
-  map.invalidateSize();
-}, 300);
 </script>
-
-</body>
-</html>
