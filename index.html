@@ -71,8 +71,10 @@ html, body {
 
 /* ================= MAP ================= */
 #map-container {
-  width: 60%;
+  flex: 1;
+  min-width: 0;
 }
+
 #map {
   width: 100%;
   height: 100%;
@@ -80,7 +82,8 @@ html, body {
 
 /* ================= SIDE PANEL ================= */
 #side-panel {
-  width: 40%;
+  width: 360px;
+  max-width: 420px;
   background: #ffffff;
   padding: 16px;
   border-left: 1px solid #ddd;
@@ -110,6 +113,12 @@ html, body {
   background: #f9f9f9;
 }
 
+.panel-pulau img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
 /* LABEL */
 .pulau-label {
   background: rgba(255,255,255,0.85);
@@ -122,6 +131,24 @@ html, body {
 
 .leaflet-top {
   top: 70px !important;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  #content {
+    flex-direction: column;
+  }
+
+  #map-container {
+    height: 60vh;
+  }
+
+  #side-panel {
+    width: 100%;
+    height: 40vh;
+    border-left: none;
+    border-top: 1px solid #ddd;
+  }
 }
 </style>
 </head>
@@ -147,15 +174,14 @@ html, body {
 <!-- ================= CONTENT ================= -->
 <div id="content">
 
-  <!-- ================= MAP ================= -->
+  <!-- MAP -->
   <div id="map-container">
     <div id="map"></div>
   </div>
 
-  <!-- ================= SIDE PANEL ================= -->
+  <!-- SIDE PANEL -->
   <div id="side-panel">
 
-    <!-- ===== INFO STATISTIK ===== -->
     <div class="info-box">
       <h4>SERTIPIKAT HAK ATAS TANAH</h4>
       <p>72 Sertipikat / 61 PPK/T</p>
@@ -175,47 +201,28 @@ html, body {
       <p class="info-highlight">Nilai ± Rp 2,01 Triliun</p>
     </div>
 
-    <!-- ===== DAFTAR INFORMASI PULAU ===== -->
     <h3>Daftar Informasi Pulau</h3>
 
-    <!-- ===== PULAU NIPA ===== -->
     <div class="panel-item panel-pulau">
       <h4>Pulau Nipa</h4>
-      <img src="Pulau Nipa.png" alt="Pulau Nipa">
+      <img src="Pulau Nipa.png">
       <p><b>Provinsi:</b> Kepulauan Riau</p>
       <p><b>Status:</b> Pulau Kecil Terluar</p>
-      <p><b>Keterangan:</b> Pulau strategis di wilayah perbatasan Indonesia dan memiliki peran penting dalam kedaulatan wilayah NKRI.</p>
+      <p><b>Keterangan:</b> Pulau strategis perbatasan NKRI.</p>
     </div>
 
-    <!-- ===== PULAU LAIN (DUMMY / PLACEHOLDER) ===== -->
-    <div class="panel-item panel-pulau">
-      <h4>Pulau 2</h4>
-      <p>Data belum tersedia</p>
-    </div>
-
-    <div class="panel-item panel-pulau">
-      <h4>Pulau 3</h4>
-      <p>Data belum tersedia</p>
-    </div>
-
-    <div class="panel-item panel-pulau">
-      <h4>Pulau 4</h4>
-      <p>Data belum tersedia</p>
-    </div>
-
-    <div class="panel-item panel-pulau">
-      <h4>Pulau 5</h4>
-      <p>Data belum tersedia</p>
-    </div>
+    <div class="panel-item"><h4>Pulau 2</h4><p>Data belum tersedia</p></div>
+    <div class="panel-item"><h4>Pulau 3</h4><p>Data belum tersedia</p></div>
 
   </div>
 </div>
+
 <!-- ================= JS ================= -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
-/* ================= VIDEO ================= */
+/* VIDEO */
 const overlay = document.getElementById("video-overlay");
 const videoBox = document.getElementById("video-box");
 const video = document.getElementById("introVideo");
@@ -228,7 +235,7 @@ overlay.addEventListener("click", () => {
 
 videoBox.addEventListener("click", e => e.stopPropagation());
 
-/* ================= MAP ================= */
+/* MAP */
 var map = L.map('map').setView([-2.5, 118], 5);
 
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
@@ -239,7 +246,6 @@ var sat = L.tileLayer(
 );
 
 L.control.layers({ "OSM": osm, "Satellite": sat }).addTo(map);
-
 L.Control.geocoder({ position: "topright" }).addTo(map);
 
 var tagIcon = L.icon({
@@ -255,13 +261,10 @@ fetch("PPKTV3.geojson")
 .then(data => {
   var g = L.geoJSON(data, {
     onEachFeature: (f,l) => {
-      l.bindPopup(f.properties?.NAMA_PUL_1 ?? "Pulau");
-      if (f.properties?.NAMA_PUL_1) {
-        l.bindTooltip(f.properties.NAMA_PUL_1,
-          {permanent:true, direction:"center", className:"pulau-label"});
-      }
-      L.marker(l.getBounds().getCenter(), {icon:tagIcon})
-        .addTo(markerLayer);
+      let name = f.properties?.NAMA_PUL_1 ?? "Pulau";
+      l.bindPopup(name);
+      l.bindTooltip(name, {permanent:true, direction:"center", className:"pulau-label"});
+      L.marker(l.getBounds().getCenter(), {icon:tagIcon}).addTo(markerLayer);
     }
   }).addTo(map);
   map.fitBounds(g.getBounds());
