@@ -214,22 +214,31 @@ var tagIcon = L.icon({
 
 var markerLayer = L.layerGroup().addTo(map);
 
-// ================= GEOJSON =================
+<script>
+// ================= GEOJSON (FIXED) =================
 fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson")
 .then(res => res.json())
 .then(data => {
 
   var geojsonLayer = L.geoJSON(data, {
+
+    // KHUSUS POINT → JADI MARKER
+    pointToLayer: function (feature, latlng) {
+      return L.marker(latlng, { icon: tagIcon });
+    },
+
     onEachFeature: function (feature, layer) {
 
       let popup = "<b>Informasi Pulau</b><hr>";
-      for (let k in feature.properties) {
-        popup += `<b>${k}</b> : ${feature.properties[k] ?? "-"}<br>`;
+      if (feature.properties) {
+        for (let k in feature.properties) {
+          popup += `<b>${k}</b> : ${feature.properties[k] ?? "-"}<br>`;
+        }
       }
 
       layer.bindPopup(popup);
 
-      // LABEL NAMA
+      // LABEL NAMA PULAU
       if (feature.properties && feature.properties.NAMA_PUL_1) {
         layer.bindTooltip(
           feature.properties.NAMA_PUL_1,
@@ -240,18 +249,13 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson"
           }
         );
       }
-
-      // MARKER TENGAH
-      var center = layer.getBounds().getCenter();
-      L.marker(center, { icon: tagIcon })
-        .addTo(markerLayer)
-        .bindPopup(popup);
     }
+
   }).addTo(map);
 
-  map.fitBounds(geojsonLayer.getBounds());
+  // ZOOM OTOMATIS (AMAN)
+  if (geojsonLayer.getLayers().length > 0) {
+    map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+  }
 });
 </script>
-
-</body>
-</html>
