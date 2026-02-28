@@ -116,7 +116,7 @@ html, body {
   white-space: nowrap;
 }
 
-/* ================= VIDEO POPUP (TAMBAHAN SAJA) ================= */
+/* ================= VIDEO POPUP ================= */
 #video-overlay {
   position: fixed;
   inset: 0;
@@ -139,6 +139,9 @@ html, body {
 #video-box video {
   width: 100%;
   display: block;
+
+  /* === FIX TAMBAHAN === */
+  pointer-events: none;
 }
 
 #close-video {
@@ -152,6 +155,9 @@ html, body {
   cursor: pointer;
   border-radius: 50%;
   padding: 4px 10px;
+
+  /* === FIX TAMBAHAN === */
+  z-index: 100000;
 }
 </style>
 </head>
