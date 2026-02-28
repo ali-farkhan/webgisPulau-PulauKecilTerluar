@@ -245,9 +245,9 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson"
 
       layer.bindPopup(popup);
 
-      if (feature.properties && feature.properties.NAMA_PULAU) {
+      if (feature.properties && feature.properties.NAMA_PUL_1) {
         layer.bindTooltip(
-          feature.properties.NAMA_PULAU,
+          feature.properties.NAMA_PUL_1,
           { permanent: true, direction: "center", className: "pulau-label" }
         );
       }
