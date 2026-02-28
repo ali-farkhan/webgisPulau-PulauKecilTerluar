@@ -17,7 +17,7 @@ html, body {
   overflow: hidden;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 #header {
   height: 60px;
   background: white;
@@ -25,11 +25,14 @@ html, body {
   align-items: center;
   padding: 0 16px;
   border-bottom: 1px solid #ddd;
+  z-index: 1000;
 }
+
 #logo {
   height: 40px;
   margin-right: 15px;
 }
+
 #title {
   flex: 1;
   text-align: center;
@@ -37,22 +40,23 @@ html, body {
   font-weight: bold;
 }
 
-/* MAIN */
+/* ================= MAIN CONTENT ================= */
 #content {
   display: flex;
   height: calc(100vh - 60px);
 }
 
-/* MAP */
+/* ================= MAP ================= */
 #map-container {
   width: 60%;
 }
+
 #map {
   width: 100%;
   height: 100%;
 }
 
-/* SIDE PANEL */
+/* ================= SIDE PANEL ================= */
 #side-panel {
   width: 40%;
   background: #ffffff;
@@ -61,54 +65,55 @@ html, body {
   overflow-y: auto;
 }
 
-/* INFO BOX */
+/* ===== INFO STATISTIK ATAS ===== */
 .info-box {
   background: linear-gradient(135deg, #eaf3ff, #ffffff);
   border: 1px solid #cbd8ff;
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
+
 .info-box h4 {
-  margin: 0 0 8px;
+  margin: 0 0 8px 0;
   font-size: 14px;
+  color: #1a3c8b;
 }
+
 .info-box p {
   margin: 4px 0;
   font-size: 13px;
   font-weight: bold;
 }
+
 .info-highlight {
   color: #c62828;
 }
 
-/* PANEL PULAU */
+/* konten panel */
 .panel-item {
   padding: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 6px;
   background: #f9f9f9;
 }
-.panel-pulau img {
-  width: 100%;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
 
-/* Geser control leaflet */
+/* geser control leaflet */
 .leaflet-top {
   top: 70px !important;
 }
 
-/* LABEL PULAU */
+/* ================= LABEL PULAU ================= */
 .pulau-label {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.85);
   border: 1px solid #333;
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 11px;
   font-weight: bold;
+  white-space: nowrap;
 }
 </style>
 </head>
@@ -132,6 +137,7 @@ html, body {
   <!-- SIDE PANEL -->
   <div id="side-panel">
 
+    <!-- ===== INFO DARI GAMBAR ===== -->
     <div class="info-box">
       <h4>SERTIPIKAT HAK ATAS TANAH</h4>
       <p>72 Sertipikat / 61 PPK/T</p>
@@ -148,25 +154,27 @@ html, body {
       <h4>TARGET LUAS BIDANG TANAH TAHUN 2024</h4>
       <p>84 Sertipikat / 73 PPK/T</p>
       <p>776,8 ha</p>
-      <p class="info-highlight">± 2,01 Triliun</p>
+      <p class="info-highlight">Nilai ± 2,01 Triliun</p>
     </div>
 
     <h3>Daftar Informasi Pulau</h3>
 
-    <div class="panel-item panel-pulau">
-      <h4>Pulau Nipa</h4>
-      <img src="Pulau Nipa.png">
-      <p><b>Provinsi:</b> Kepulauan Riau</p>
-      <p><b>Status:</b> Pulau Kecil Terluar</p>
-      <p><b>Keterangan:</b> Pulau strategis perbatasan Indonesia.</p>
-    </div>
-
+    <!-- contoh isi -->
+    <div class="panel-item">Pulau 1</div>
     <div class="panel-item">Pulau 2</div>
     <div class="panel-item">Pulau 3</div>
     <div class="panel-item">Pulau 4</div>
     <div class="panel-item">Pulau 5</div>
+    <div class="panel-item">Pulau 6</div>
+    <div class="panel-item">Pulau 7</div>
+    <div class="panel-item">Pulau 8</div>
+    <div class="panel-item">Pulau 9</div>
+    <div class="panel-item">Pulau 10</div>
+    <div class="panel-item">Pulau 11</div>
+    <div class="panel-item">Pulau 12</div>
 
   </div>
+
 </div>
 
 <!-- JS -->
@@ -174,10 +182,10 @@ html, body {
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
-// MAP
+// ================= MAP =================
 var map = L.map('map').setView([-2.5, 118], 5);
 
-// BASEMAP
+// ================= BASEMAP =================
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap'
 }).addTo(map);
@@ -191,30 +199,27 @@ L.control.layers({
   "Satellite": sat
 }).addTo(map);
 
-// SEARCH
+// ================= SEARCH =================
 L.Control.geocoder({
   position: "topright",
   placeholder: "Cari lokasi..."
 }).addTo(map);
 
-// ICON
+// ================= ICON =================
 var tagIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [22, 22],
   iconAnchor: [11, 22]
 });
 
-// GEOJSON (FIXED)
-fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson")
+var markerLayer = L.layerGroup().addTo(map);
+
+// ================= GEOJSON =================
+fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson")
 .then(res => res.json())
 .then(data => {
 
   var geojsonLayer = L.geoJSON(data, {
-
-    pointToLayer: function (feature, latlng) {
-      return L.marker(latlng, { icon: tagIcon });
-    },
-
     onEachFeature: function (feature, layer) {
 
       let popup = "<b>Informasi Pulau</b><hr>";
@@ -224,17 +229,27 @@ fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV3.geojson"
 
       layer.bindPopup(popup);
 
-      if (feature.properties && feature.properties.NAMA_PUL_1) {
+      // LABEL NAMA
+      if (feature.properties && feature.properties.NAMA_PULAU) {
         layer.bindTooltip(
-          feature.properties.NAMA_PUL_1,
-          { permanent: true, direction: "center", className: "pulau-label" }
+          feature.properties.NAMA_PULAU,
+          {
+            permanent: true,
+            direction: "center",
+            className: "pulau-label"
+          }
         );
       }
-    }
 
+      // MARKER TENGAH
+      var center = layer.getBounds().getCenter();
+      L.marker(center, { icon: tagIcon })
+        .addTo(markerLayer)
+        .bindPopup(popup);
+    }
   }).addTo(map);
 
-  map.fitBounds(geojsonLayer.getBounds(), { padding: [30, 30] });
+  map.fitBounds(geojsonLayer.getBounds());
 });
 </script>
 
