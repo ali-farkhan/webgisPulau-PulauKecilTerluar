@@ -224,9 +224,14 @@ html, body {
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
-// TUTUP VIDEO
+// ================= FIX TUTUP VIDEO =================
 document.getElementById("close-video").onclick = function () {
-  document.getElementById("video-overlay").style.display = "none";
+  const overlay = document.getElementById("video-overlay");
+  const video = overlay.querySelector("video");
+
+  video.pause();
+  video.currentTime = 0;
+  overlay.style.display = "none";
 };
 
 // ================= MAP =================
