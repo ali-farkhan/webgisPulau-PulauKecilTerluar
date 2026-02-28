@@ -17,7 +17,7 @@ html, body {
   overflow: hidden;
 }
 
-/* HEADER */
+/* ================= HEADER ================= */
 #header {
   height: 60px;
   background: white;
@@ -25,6 +25,7 @@ html, body {
   align-items: center;
   padding: 0 16px;
   border-bottom: 1px solid #ddd;
+  z-index: 1000;
 }
 
 #logo {
@@ -39,16 +40,15 @@ html, body {
   font-weight: bold;
 }
 
-/* CONTENT */
+/* ================= MAIN CONTENT ================= */
 #content {
   display: flex;
   height: calc(100vh - 60px);
 }
 
-/* MAP */
+/* ================= MAP ================= */
 #map-container {
   width: 60%;
-  height: 100%;
 }
 
 #map {
@@ -56,7 +56,7 @@ html, body {
   height: 100%;
 }
 
-/* SIDE PANEL */
+/* ================= SIDE PANEL ================= */
 #side-panel {
   width: 40%;
   background: #ffffff;
@@ -65,16 +65,18 @@ html, body {
   overflow-y: auto;
 }
 
+/* ===== INFO STATISTIK ATAS ===== */
 .info-box {
   background: linear-gradient(135deg, #eaf3ff, #ffffff);
   border: 1px solid #cbd8ff;
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .info-box h4 {
-  margin: 0 0 8px;
+  margin: 0 0 8px 0;
   font-size: 14px;
   color: #1a3c8b;
 }
@@ -89,6 +91,7 @@ html, body {
   color: #c62828;
 }
 
+/* konten panel */
 .panel-item {
   padding: 12px;
   margin-bottom: 12px;
@@ -97,11 +100,12 @@ html, body {
   background: #f9f9f9;
 }
 
+/* geser control leaflet */
 .leaflet-top {
   top: 70px !important;
 }
 
-/* LABEL */
+/* ================= LABEL PULAU ================= */
 .pulau-label {
   background: rgba(255,255,255,0.85);
   border: 1px solid #333;
@@ -109,25 +113,31 @@ html, body {
   padding: 2px 6px;
   font-size: 11px;
   font-weight: bold;
+  white-space: nowrap;
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div id="header">
   <img src="LogoKKP.png" id="logo">
   <div id="title">Pulau-Pulau Kecil Terluar Indonesia</div>
 </div>
 
+<!-- CONTENT -->
 <div id="content">
 
+  <!-- MAP -->
   <div id="map-container">
     <div id="map"></div>
   </div>
 
+  <!-- SIDE PANEL -->
   <div id="side-panel">
 
+    <!-- ===== INFO DARI GAMBAR ===== -->
     <div class="info-box">
       <h4>SERTIPIKAT HAK ATAS TANAH</h4>
       <p>72 Sertipikat / 61 PPK/T</p>
@@ -148,13 +158,26 @@ html, body {
     </div>
 
     <h3>Daftar Informasi Pulau</h3>
+
+    <!-- contoh isi -->
     <div class="panel-item">Pulau 1</div>
     <div class="panel-item">Pulau 2</div>
     <div class="panel-item">Pulau 3</div>
+    <div class="panel-item">Pulau 4</div>
+    <div class="panel-item">Pulau 5</div>
+    <div class="panel-item">Pulau 6</div>
+    <div class="panel-item">Pulau 7</div>
+    <div class="panel-item">Pulau 8</div>
+    <div class="panel-item">Pulau 9</div>
+    <div class="panel-item">Pulau 10</div>
+    <div class="panel-item">Pulau 11</div>
+    <div class="panel-item">Pulau 12</div>
 
   </div>
+
 </div>
 
+<!-- JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
@@ -163,7 +186,10 @@ html, body {
 var map = L.map('map').setView([-2.5, 118], 5);
 
 // ================= BASEMAP =================
-var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
+
 var sat = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 );
@@ -186,3 +212,46 @@ var tagIcon = L.icon({
   iconAnchor: [11, 22]
 });
 
+var markerLayer = L.layerGroup().addTo(map);
+
+// ================= GEOJSON =================
+fetch("https://raw.githubusercontent.com/ali-farkhan/webgis/main/PPKTV2.geojson")
+.then(res => res.json())
+.then(data => {
+
+  var geojsonLayer = L.geoJSON(data, {
+    onEachFeature: function (feature, layer) {
+
+      let popup = "<b>Informasi Pulau</b><hr>";
+      for (let k in feature.properties) {
+        popup += `<b>${k}</b> : ${feature.properties[k] ?? "-"}<br>`;
+      }
+
+      layer.bindPopup(popup);
+
+      // LABEL NAMA
+      if (feature.properties && feature.properties.NAMA_PULAU) {
+        layer.bindTooltip(
+          feature.properties.NAMA_PULAU,
+          {
+            permanent: true,
+            direction: "center",
+            className: "pulau-label"
+          }
+        );
+      }
+
+      // MARKER TENGAH
+      var center = layer.getBounds().getCenter();
+      L.marker(center, { icon: tagIcon })
+        .addTo(markerLayer)
+        .bindPopup(popup);
+    }
+  }).addTo(map);
+
+  map.fitBounds(geojsonLayer.getBounds());
+});
+</script>
+
+</body>
+</html>
