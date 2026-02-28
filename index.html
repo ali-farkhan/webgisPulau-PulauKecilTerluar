@@ -17,6 +17,30 @@ html, body {
   overflow: hidden;
 }
 
+/* ================= VIDEO OVERLAY ================= */
+#video-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+#video-box {
+  width: 70%;
+  max-width: 800px;
+  background: black;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#video-box video {
+  width: 100%;
+  display: block;
+}
+
 /* ================= HEADER ================= */
 #header {
   height: 60px;
@@ -40,7 +64,7 @@ html, body {
   font-weight: bold;
 }
 
-/* ================= MAIN CONTENT ================= */
+/* ================= CONTENT ================= */
 #content {
   display: flex;
   height: calc(100vh - 60px);
@@ -50,7 +74,6 @@ html, body {
 #map-container {
   width: 60%;
 }
-
 #map {
   width: 100%;
   height: 100%;
@@ -59,53 +82,32 @@ html, body {
 /* ================= SIDE PANEL ================= */
 #side-panel {
   width: 40%;
-  background: #ffffff;
+  background: #fff;
   padding: 16px;
   border-left: 1px solid #ddd;
   overflow-y: auto;
 }
 
-/* ===== INFO STATISTIK ATAS ===== */
+/* INFO BOX */
 .info-box {
   background: linear-gradient(135deg, #eaf3ff, #ffffff);
   border: 1px solid #cbd8ff;
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .info-box h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
   font-size: 14px;
-  color: #1a3c8b;
-}
-
-.info-box p {
-  margin: 4px 0;
-  font-size: 13px;
-  font-weight: bold;
 }
 
 .info-highlight {
   color: #c62828;
+  font-weight: bold;
 }
 
-/* konten panel */
-.panel-item {
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: #f9f9f9;
-}
-
-/* geser control leaflet */
-.leaflet-top {
-  top: 70px !important;
-}
-
-/* ================= LABEL PULAU ================= */
+/* LABEL */
 .pulau-label {
   background: rgba(255,255,255,0.85);
   border: 1px solid #333;
@@ -116,48 +118,8 @@ html, body {
   white-space: nowrap;
 }
 
-/* ================= VIDEO POPUP ================= */
-#video-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
-}
-
-#video-box {
-  position: relative;
-  width: 70%;
-  max-width: 800px;
-  background: black;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-#video-box video {
-  width: 100%;
-  display: block;
-
-  /* === FIX TAMBAHAN === */
-  pointer-events: none;
-}
-
-#close-video {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  background: red;
-  color: white;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 4px 10px;
-
-  /* === FIX TAMBAHAN === */
-  z-index: 100000;
+.leaflet-top {
+  top: 70px !important;
 }
 </style>
 </head>
@@ -167,44 +129,12 @@ html, body {
 <!-- ================= VIDEO POPUP ================= -->
 <div id="video-overlay">
   <div id="video-box">
-    <button id="close-video">✖</button>
     <video id="introVideo" autoplay muted controls>
       <source src="hat.mp4" type="video/mp4">
       Browser Anda tidak mendukung video.
     </video>
   </div>
 </div>
-
-<script>
-const overlay = document.getElementById("video-overlay");
-const videoBox = document.getElementById("video-box");
-const closeBtn = document.getElementById("close-video");
-const video = document.getElementById("introVideo");
-
-/* === FUNGSI TUTUP VIDEO === */
-function closeVideo() {
-  video.pause();
-  video.currentTime = 0;
-  overlay.style.display = "none";
-}
-
-/* Tombol close */
-closeBtn.addEventListener("click", function (e) {
-  e.stopPropagation();
-  closeVideo();
-});
-
-/* Klik DI LUAR video */
-overlay.addEventListener("click", closeVideo);
-
-/* Klik DI DALAM video → JANGAN TUTUP */
-videoBox.addEventListener("click", function (e) {
-  e.stopPropagation();
-});
-</script>
-
-</body>
-</html>
 
 <!-- ================= HEADER ================= -->
 <div id="header">
@@ -228,30 +158,18 @@ videoBox.addEventListener("click", function (e) {
 
     <div class="info-box">
       <h4>LUAS BIDANG TANAH s.d AWAL DES 2024</h4>
-      <p>7.464.990 m²</p>
       <p>746,499 ha</p>
     </div>
 
     <div class="info-box">
-      <h4>TARGET LUAS BIDANG TANAH TAHUN 2024</h4>
-      <p>84 Sertipikat / 73 PPK/T</p>
-      <p>776,8 ha</p>
-      <p class="info-highlight">Nilai ± 2,01 Triliun</p>
+      <h4>TARGET TAHUN 2024</h4>
+      <p class="info-highlight">± Rp 2,01 Triliun</p>
     </div>
 
     <h3>Daftar Informasi Pulau</h3>
-    <div class="panel-item">Pulau 1</div>
-    <div class="panel-item">Pulau 2</div>
-    <div class="panel-item">Pulau 3</div>
-    <div class="panel-item">Pulau 4</div>
-    <div class="panel-item">Pulau 5</div>
-    <div class="panel-item">Pulau 6</div>
-    <div class="panel-item">Pulau 7</div>
-    <div class="panel-item">Pulau 8</div>
-    <div class="panel-item">Pulau 9</div>
-    <div class="panel-item">Pulau 10</div>
-    <div class="panel-item">Pulau 11</div>
-    <div class="panel-item">Pulau 12</div>
+    <div>Pulau 1</div>
+    <div>Pulau 2</div>
+    <div>Pulau 3</div>
   </div>
 
 </div>
@@ -261,20 +179,25 @@ videoBox.addEventListener("click", function (e) {
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
 <script>
-// ================= FIX TUTUP VIDEO =================
-document.getElementById("close-video").onclick = function () {
-  const overlay = document.getElementById("video-overlay");
-  const video = overlay.querySelector("video");
+/* ================= VIDEO LOGIC ================= */
+const overlay = document.getElementById("video-overlay");
+const videoBox = document.getElementById("video-box");
+const video = document.getElementById("introVideo");
 
+/* klik di luar video → close */
+overlay.addEventListener("click", () => {
   video.pause();
   video.currentTime = 0;
   overlay.style.display = "none";
-};
+});
 
-// ================= MAP =================
+/* klik di video → jangan close */
+videoBox.addEventListener("click", e => e.stopPropagation());
+
+/* ================= MAP ================= */
 var map = L.map('map').setView([-2.5, 118], 5);
 
-// ================= BASEMAP =================
+/* BASEMAP */
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap'
 }).addTo(map);
@@ -288,13 +211,13 @@ L.control.layers({
   "Satellite": sat
 }).addTo(map);
 
-// ================= SEARCH =================
+/* SEARCH */
 L.Control.geocoder({
   position: "topright",
   placeholder: "Cari lokasi..."
 }).addTo(map);
 
-// ================= ICON =================
+/* ICON */
 var tagIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [22, 22],
@@ -303,7 +226,7 @@ var tagIcon = L.icon({
 
 var markerLayer = L.layerGroup().addTo(map);
 
-// ================= GEOJSON =================
+/* GEOJSON */
 fetch("PPKTV3.geojson")
 .then(res => res.json())
 .then(data => {
@@ -318,7 +241,7 @@ fetch("PPKTV3.geojson")
 
       layer.bindPopup(popup);
 
-      if (feature.properties && feature.properties.NAMA_PUL_1) {
+      if (feature.properties?.NAMA_PUL_1) {
         layer.bindTooltip(
           feature.properties.NAMA_PUL_1,
           { permanent: true, direction: "center", className: "pulau-label" }
@@ -335,7 +258,7 @@ fetch("PPKTV3.geojson")
   map.fitBounds(geojsonLayer.getBounds());
 });
 
-// FIX SIZE FLEX
+/* FIX FLEX */
 setTimeout(() => map.invalidateSize(), 300);
 </script>
 
