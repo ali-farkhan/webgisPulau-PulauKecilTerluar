@@ -17,30 +17,6 @@ html, body {
   overflow: hidden;
 }
 
-/* ================= VIDEO OVERLAY ================= */
-#video-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.65);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
-}
-
-#video-box {
-  width: 70%;
-  max-width: 800px;
-  background: black;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-#video-box video {
-  width: 100%;
-  display: block;
-}
-
 /* ================= HEADER ================= */
 #header {
   height: 60px;
@@ -49,7 +25,6 @@ html, body {
   align-items: center;
   padding: 0 16px;
   border-bottom: 1px solid #ddd;
-  z-index: 1000;
 }
 
 #logo {
@@ -64,7 +39,7 @@ html, body {
   font-weight: bold;
 }
 
-/* ================= CONTENT ================= */
+/* ================= MAIN ================= */
 #content {
   display: flex;
   height: calc(100vh - 60px);
@@ -82,32 +57,71 @@ html, body {
 /* ================= SIDE PANEL ================= */
 #side-panel {
   width: 40%;
-  background: #fff;
+  background: #ffffff;
   padding: 16px;
   border-left: 1px solid #ddd;
   overflow-y: auto;
 }
 
-/* INFO BOX */
+/* ================= INFO BOX ================= */
 .info-box {
   background: linear-gradient(135deg, #eaf3ff, #ffffff);
   border: 1px solid #cbd8ff;
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .info-box h4 {
   margin: 0 0 8px;
   font-size: 14px;
+  color: #1a3c8b;
+}
+
+.info-box p {
+  margin: 4px 0;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .info-highlight {
   color: #c62828;
-  font-weight: bold;
 }
 
-/* LABEL */
+/* ================= PANEL PULAU ================= */
+.panel-item {
+  padding: 12px;
+  margin-bottom: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.panel-pulau h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #0d47a1;
+}
+
+.panel-pulau img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+}
+
+.panel-pulau p {
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+/* geser control leaflet */
+.leaflet-top {
+  top: 70px !important;
+}
+
+/* ================= LABEL PULAU ================= */
 .pulau-label {
   background: rgba(255,255,255,0.85);
   border: 1px solid #333;
@@ -117,26 +131,12 @@ html, body {
   font-weight: bold;
   white-space: nowrap;
 }
-
-.leaflet-top {
-  top: 70px !important;
-}
 </style>
 </head>
 
 <body>
 
-<!-- ================= VIDEO POPUP ================= -->
-<div id="video-overlay">
-  <div id="video-box">
-    <video id="introVideo" autoplay muted controls>
-      <source src="hat.mp4" type="video/mp4">
-      Browser Anda tidak mendukung video.
-    </video>
-  </div>
-</div>
-
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <div id="header">
   <img src="LogoKKP.png" id="logo">
   <div id="title">Pulau-Pulau Kecil Terluar Indonesia</div>
