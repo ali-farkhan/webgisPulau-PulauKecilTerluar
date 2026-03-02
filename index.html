@@ -83,7 +83,7 @@ html, body {
 
 /* ================= SIDE PANEL ================= */
 #side-panel {
-  width: 600px;            /* ⬅️ DILEBARKAN */
+  width: 600px;
   max-width: 600px;
   background: #ffffff;
   padding: 16px;
@@ -99,7 +99,7 @@ html, body {
   padding: 14px;
   margin-bottom: 16px;
 }
-/* RAPATKAN SPASI TEKS INFO BOX */
+
 .info-box h4 {
   margin: 0 0 6px 0;
   line-height: 1.2;
@@ -109,6 +109,7 @@ html, body {
   margin: 2px 0;
   line-height: 1.25;
 }
+
 .info-highlight {
   color: #c62828;
   font-weight: bold;
@@ -137,10 +138,29 @@ html, body {
   padding: 2px 6px;
   font-size: 11px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .leaflet-top {
   top: 70px !important;
+}
+
+/* POPUP TABLE */
+.popup-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12px;
+}
+
+.popup-table td {
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+}
+
+.popup-table td:first-child {
+  background: #f2f2f2;
+  font-weight: bold;
+  width: 40%;
 }
 
 /* ================= RESPONSIVE ================= */
@@ -184,12 +204,10 @@ html, body {
 <!-- ================= CONTENT ================= -->
 <div id="content">
 
-  <!-- MAP -->
   <div id="map-container">
     <div id="map"></div>
   </div>
 
-  <!-- SIDE PANEL -->
   <div id="side-panel">
 
     <div class="info-box">
@@ -208,7 +226,7 @@ html, body {
       <h4>TARGET LUAS BIDANG TANAH TAHUN 2024</h4>
       <p>84 Sertipikat / 73 PPK/T</p>
       <p>776,8 ha</p>
-      <p class="info-highlight">Nilai ± Rp 2,01 Triliun</p>
+      <p class="info-highlight">Nilai ± Rp</p>
     </div>
 
     <h3>Daftar Informasi Pulau</h3>
@@ -216,9 +234,7 @@ html, body {
     <div class="panel-item panel-pulau">
       <h4>Pulau Nipa</h4>
       <img src="Pulau Nipa.png">
-      <p><b>Provinsi:</b> Kepulauan Riau</p>
-      <p><b>Status:</b> Pulau Kecil Terluar</p>
-      <p><b>Keterangan:</b> Pulau strategis perbatasan NKRI.</p>
+      <p>Klik nama pulau di peta untuk detail atribut</p>
     </div>
 
     <div class="panel-item">
@@ -244,14 +260,12 @@ const overlay = document.getElementById("video-overlay");
 const videoBox = document.getElementById("video-box");
 const video = document.getElementById("introVideo");
 
-/* klik di luar video → close */
 overlay.addEventListener("click", () => {
   video.pause();
   video.currentTime = 0;
   overlay.style.display = "none";
 });
 
-/* klik di video → tidak close */
 videoBox.addEventListener("click", e => e.stopPropagation());
 
 /* ================= MAP ================= */
@@ -280,10 +294,26 @@ var markerLayer = L.layerGroup().addTo(map);
 fetch("PPKTV3.geojson")
 .then(res => res.json())
 .then(data => {
+
+  function buildPopup(properties) {
+    let rows = "";
+    for (let key in properties) {
+      rows += `
+        <tr>
+          <td>${key}</td>
+          <td>${properties[key] ?? "-"}</td>
+        </tr>`;
+    }
+    return `<table class="popup-table">${rows}</table>`;
+  }
+
   var geo = L.geoJSON(data, {
     onEachFeature: (f, layer) => {
+
       const name = f.properties?.NAMA_PUL_1 || "Pulau";
-      layer.bindPopup(name);
+
+      layer.bindPopup(buildPopup(f.properties));
+
       layer.bindTooltip(name, {
         permanent: true,
         direction: "center",
@@ -292,6 +322,7 @@ fetch("PPKTV3.geojson")
 
       if (layer.getBounds) {
         L.marker(layer.getBounds().getCenter(), { icon: tagIcon })
+          .on("click", () => layer.openPopup())
           .addTo(markerLayer);
       }
     }
